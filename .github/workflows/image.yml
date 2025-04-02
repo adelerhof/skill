@@ -28,7 +28,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: false
-        DEFAULT_BUMP: 
+        DEFAULT_BUMP: minor
         GIT_API_TAGGING : true
 
 
