@@ -71,14 +71,14 @@ jobs:
           ghcr.io/${{env.GITHUB_REPO}}:latest
           ghcr.io/${{env.GITHUB_REPO}}:buildbyghactions
 
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: 'ghcr.io/${{env.GITHUB_REPO}}:scan'
-        format: 'template'
-        template: '@/contrib/sarif.tpl'
-        output: 'trivy-results.sarif'
-        severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+    # - name: Run Trivy vulnerability scanner
+    #   uses: aquasecurity/trivy-action@master
+    #   with:
+    #     image-ref: 'ghcr.io/${{env.GITHUB_REPO}}:scan'
+    #     format: 'template'
+    #     template: '@/contrib/sarif.tpl'
+    #     output: 'trivy-results.sarif'
+    #     severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
 
     # - name: Upload Trivy scan results to GitHub Security tab
     #   uses: github/codeql-action/upload-sarif@v1
@@ -89,16 +89,30 @@ jobs:
     #     docker compose -f compose.yml pull
     #     docker compose -f compose.yml up -d
 
-    - name: Set image tag
-      run: echo "TAG=$(echo ${{ steps.docker_build.outputs.tags }} | cut -d ',' -f 1)" >> $GITHUB_ENV
+    - name: Extract tag
+      run: echo "TAG=ghcr.io/${{env.GITHUB_REPO}}:${{ steps.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
 
     - name: Debug TAG value
       run: echo "TAG=${{ env.TAG }}"
 
     - name: Deploy Docker Compose
       run: |
-        TAG=${{ steps.docker_build.outputs.tags }}
         docker compose -f compose.yml pull
         docker compose -f compose.yml up -d
       env:
         TAG: ${{ env.TAG }}
+
+
+    # - name: Set image tag
+    #   run: echo "TAG=$(echo ${{ steps.docker_build.outputs.tags }} | cut -d ',' -f 1)" >> $GITHUB_ENV
+
+    # - name: Debug TAG value
+    #   run: echo "TAG=${{ env.TAG }}"
+
+    # - name: Deploy Docker Compose
+    #   run: |
+    #     TAG=${{ steps.docker_build.outputs.tags }}
+    #     docker compose -f compose.yml pull
+    #     docker compose -f compose.yml up -d
+    #   env:
+    #     TAG: ${{ env.TAG }}
