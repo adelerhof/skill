@@ -86,5 +86,5 @@ jobs:
     #     sarif_file: 'trivy-results.sarif'
     - name: Pull and deploy Docker image
       run: |
-        docker-compose -f compose.yml pull
-        docker-compose -f compose.yml up -d
+        docker compose -f compose.yml pull
+        docker compose -f compose.yml up -d
