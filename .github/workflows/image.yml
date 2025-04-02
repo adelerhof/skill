@@ -84,7 +84,14 @@ jobs:
     #   uses: github/codeql-action/upload-sarif@v1
     #   with:
     #     sarif_file: 'trivy-results.sarif'
-    - name: Pull and deploy Docker image
+    # - name: Pull and deploy Docker image
+    #   run: |
+    #     docker compose -f compose.yml pull
+    #     docker compose -f compose.yml up -d
+
+    - name: Deploy Docker Compose
       run: |
-        docker compose -f compose.yml pull
+        TAG=${{ steps.docker_build.outputs.tags }}
         docker compose -f compose.yml up -d
+      env:
+        TAG: ${{ steps.docker_build.outputs.tags }}
