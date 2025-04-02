@@ -90,7 +90,10 @@ jobs:
     #     docker compose -f compose.yml up -d
 
     - name: Set image tag
-      run: echo "TAG=${{ steps.docker_build.outputs.tags }}" >> $GITHUB_ENV
+      run: echo "TAG=$(echo ${{ steps.docker_build.outputs.tags }} | cut -d ',' -f 1)" >> $GITHUB_ENV
+
+    - name: Debug TAG value
+      run: echo "TAG=${{ env.TAG }}"
 
     - name: Deploy Docker Compose
       run: |
@@ -98,4 +101,4 @@ jobs:
         docker compose -f compose.yml pull
         docker compose -f compose.yml up -d
       env:
-        TAG: ${{ steps.docker_build.outputs.tags }}
+        TAG: ${{ env.TAG }}
