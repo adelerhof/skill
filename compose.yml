@@ -1,5 +1,5 @@
 services:
   web:
-    image: ghcr.io/adelerhof/skill:${TAG}
+    image: ${TAG}
     ports:
       - "80:80"
