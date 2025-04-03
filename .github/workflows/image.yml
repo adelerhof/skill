@@ -101,8 +101,15 @@ jobs:
     - name: Debug TAG value
       run: echo "TAG=${{ env.TAG }}"
 
-    - name: Set up Docker network
-      run: docker network create web
+    - name: Create Docker network if not exists
+      run: |
+        NETWORK_NAME="web"
+        if docker network ls | grep -q "$NETWORK_NAME"; then
+          echo "Network '$NETWORK_NAME' already exists."
+        else
+          docker network create "$NETWORK_NAME"
+          echo "Network '$NETWORK_NAME' created."
+        fi
 
     - name: Set up directories
       run: |
