@@ -43,15 +43,6 @@ jobs:
       # https://github.com/actions/checkout
       uses: actions/checkout@v4
 
-    - name: Create temporary directory
-      run: mkdir -p ${{ github.workspace }}/tmp
-
-    - name: Move files to temporary directory
-      run: mv /home/ghrunner/actions-runner/_work/skill/skill/.certbot/conf ${{ github.workspace }}/tmp
-
-    - name: Clean up temporary directory
-      run: sudo rm -rf ${{ github.workspace }}/tmp
-
     - name: Log in to the Container registry
       # https://github.com/docker/login-action
       uses: docker/login-action@v3
@@ -113,9 +104,19 @@ jobs:
     - name: Deploy Docker Compose
       run: |
         docker compose -f compose.yml pull
-        docker compose -f compose.yml up -d
+        # docker compose -f compose.yml up -d
       env:
         TAG: ${{ env.TAG }}
+
+    - name: Adjust permissions for Certbot directory
+      run: sudo chmod -R 777 /home/ghrunner/actions-runner/_work/skill/skill/.certbot/conf
+
+    - name: Clean up repository
+      run: sudo rm -rf /home/ghrunner/actions-runner/_work/skill/skill
+
+    - name: Start services
+      run: docker-compose up -d
+  
 
     - name: Obtain Let's Encrypt certificate
       run: |
