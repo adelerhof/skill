@@ -101,6 +101,9 @@ jobs:
     - name: Debug TAG value
       run: echo "TAG=${{ env.TAG }}"
 
+    - name: Set up Docker network
+      run: docker network create web
+
     - name: Set up directories
       run: |
         mkdir -p certs vhost.d html conf.d acme
