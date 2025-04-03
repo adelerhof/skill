@@ -24,10 +24,13 @@ services:
       - ./acme:/etc/acme.sh
     environment:
       - DEFAULT_EMAIL=skill@blaataap.com
+      - NGINX_PROXY_CONTAINER=nginx-proxy
     depends_on:
       - nginx-proxy
     networks:
       - web
+    labels:
+      - "com.github.nginx-proxy.nginx_proxy=true"
 
   web:
     image: ${REPOSITORY}:${TAG}
