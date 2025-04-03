@@ -115,6 +115,8 @@ jobs:
       env:
         TAG: ${{ env.TAG }}
 
+    - name: Verify Nginx Configuration
+      run: docker exec -it nginx-proxy cat /etc/nginx/conf.d/default.conf
 
     # - name: Set image tag
     #   run: echo "TAG=$(echo ${{ steps.docker_build.outputs.tags }} | cut -d ',' -f 1)" >> $GITHUB_ENV
