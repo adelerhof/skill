@@ -1,23 +1,26 @@
 name: Docker Image CI
 
+# Triggers the workflow on push or pull request events
 on:
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
+
 env:
   REGISTRY: ghcr.io
 
 jobs:
   build:
-    # runs-on: ubuntu-latest
-    runs-on: self-hosted
-    permissions:
+    runs-on: self-hosted # Use a self-hosted runner
+    # runs-on: ubuntu-latest # Use this if you don't have a self-hosted runner
+    permissions: # Set permissions for the workflow
       contents: write
       packages: write
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
       with:
         fetch-depth: '0'
 
@@ -31,9 +34,10 @@ jobs:
         DEFAULT_BUMP: minor
         GIT_API_TAGGING : true
 
-
-    - name: Set releaase
+    - name: Set release
       run: |
+        # Extract organization name and repository name from GITHUB_REPOSITORY
+        # GITHUB_REPOSITORY is in the format "owner/repo"
         echo "GITHUB_ORG="$(echo ${GITHUB_REPOSITORY} | sed 's/\/docker-.*//' ) >> $GITHUB_ENV
         echo "GITHUB_REPO="$(echo ${GITHUB_REPOSITORY} | sed 's/.*\/docker-//' ) >> $GITHUB_ENV
         echo "GITHUB_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
@@ -71,55 +75,17 @@ jobs:
           ghcr.io/${{env.GITHUB_REPO}}:latest
           ghcr.io/${{env.GITHUB_REPO}}:buildbyghactions
 
-    # - name: Run Trivy vulnerability scanner
-    #   uses: aquasecurity/trivy-action@master
-    #   with:
-    #     image-ref: 'ghcr.io/${{env.GITHUB_REPO}}:scan'
-    #     format: 'template'
-    #     template: '@/contrib/sarif.tpl'
-    #     output: 'trivy-results.sarif'
-    #     severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
-
-    # - name: Upload Trivy scan results to GitHub Security tab
-    #   uses: github/codeql-action/upload-sarif@v1
-    #   with:
-    #     sarif_file: 'trivy-results.sarif'
-    # - name: Pull and deploy Docker image
-    #   run: |
-    #     docker compose -f compose.yml pull
-    #     docker compose -f compose.yml up -d
-
-    # - name: Extract tag
-    #   run: echo "TAG=ghcr.io/${{env.GITHUB_REPO}}:${{ steps.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
-
-    - name: Set repository
+    - name: Set repository in environment variable
       run: echo "REPOSITORY=ghcr.io/${{env.GITHUB_REPO}}" >> $GITHUB_ENV
 
-    - name: Extract tag
+    - name: Set tag in environment variable
       run: echo "TAG=${{ steps.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
-
-    - name: Debug TAG value
-      run: echo "TAG=${{ env.TAG }}"
 
     - name: Deploy Docker Compose
       run: |
-        docker compose -f compose.yml pull
-        docker compose -f compose.yml up --build -d --remove-orphans
-        # docker compose -f compose.yml up -d
+        # Pull the latest images
+        docker compose -f docker-compose.yml pull
+        # Build and start the containers in detached mode
+        docker compose -f docker-compose.yml up --build -d --remove-orphans
       env:
         TAG: ${{ env.TAG }}
-
-
-    # - name: Set image tag
-    #   run: echo "TAG=$(echo ${{ steps.docker_build.outputs.tags }} | cut -d ',' -f 1)" >> $GITHUB_ENV
-
-    # - name: Debug TAG value
-    #   run: echo "TAG=${{ env.TAG }}"
-
-    # - name: Deploy Docker Compose
-    #   run: |
-    #     TAG=${{ steps.docker_build.outputs.tags }}
-    #     docker compose -f compose.yml pull
-    #     docker compose -f compose.yml up -d
-    #   env:
-    #     TAG: ${{ env.TAG }}

@@ -3,7 +3,7 @@ version: '3.8'
 
 services:
   nginx-proxy:
-    image: nginxproxy/nginx-proxy:latest # Use a specific tag in production if preferred
+    image: docker.io/nginxproxy/nginx-proxy:1.7 # Use a specific tag in production if preferred
     container_name: nginx-proxy
     ports:
       - "80:80"
@@ -21,7 +21,7 @@ services:
     restart: always
 
   letsencrypt-companion:
-    image: nginxproxy/acme-companion:latest # Use a specific tag in production if preferred
+    image: docker.io/nginxproxy/acme-companion:2.5 # Use a specific tag in production if preferred
     container_name: letsencrypt-companion
     volumes:
       # Share the docker socket to detect containers
@@ -31,8 +31,8 @@ services:
       - vhostd:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
     environment:
-      # Optional: Set default email for Let's Encrypt registration
-      - DEFAULT_EMAIL=your-email@example.com
+      # Set default email for Let's Encrypt registration
+      - DEFAULT_EMAIL=skill@blaataap.com
       # Tell the companion which nginx-proxy container to use (by container name)
       - NGINX_PROXY_CONTAINER=nginx-proxy
     networks:
@@ -42,11 +42,9 @@ services:
     restart: always
 
   # Your Application Service
-  webapp: # Rename this to match your actual service name
-    # Replace with your actual image build/source details
-    # E.g., build: . or image: your-dockerhub-user/your-app:latest
+  skill: # Name of the service
     image: ${REPOSITORY}:${TAG}
-    container_name: my_skill_app # Optional, but can be helpful
+    container_name: skill # Optional, but can be helpful
     # --- CRITICAL NGINX-PROXY/LETSENCRYPT VARIABLES ---
     environment:
       - VIRTUAL_HOST=skill.blaataap.com
@@ -57,7 +55,7 @@ services:
     # Expose the port your application listens on *inside* the container
     # DO NOT use 'ports:' here, nginx-proxy handles external exposure.
     expose:
-      - "80" # Replace 8000 with the port your app listens on
+      - "80" # The port your app listens on
     networks:
       - webproxy # Must be on the same network as the proxy
     # Add any other volumes, env vars, etc. your app needs
@@ -76,6 +74,7 @@ volumes:
   vhostd:
   html:
 
+# Old service
 # services:
 #   web:
 #     image: ${REPOSITORY}:${TAG}
