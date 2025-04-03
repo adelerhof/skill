@@ -1,52 +1,37 @@
 services:
-  nginx-proxy:
-    image: nginxproxy/nginx-proxy:latest
+  web:
+    image: ${REPOSITORY}:${TAG}
+    container_name: web
+    networks:
+      - web
+    ports:
+      - "8000:80"
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    networks:
+      - web
     ports:
       - "80:80"
       - :443:443
     volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./certs:/etc/nginx/certs
-      - ./vhost.d:/etc/nginx/vhost.d
-      - ./html:/usr/share/nginx/html
-      - ./conf.d:/etc/nginx/conf.d
-    environment:
-      - ENABLE_IPV6=true
-    networks:
-      - web
-    command: /bin/sh -c "mkdir -p /etc/nginx/conf.d && nginx -g 'daemon off;'"
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - .certbot/conf:/etc/letsencrypt
+      - .certbot/www:/var/www/certbot
 
-  acme-companion:
-    image: nginxproxy/acme-companion:latest
-    container_name: acme-companion
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./certs:/etc/nginx/certs
-      - ./acme:/etc/acme.sh
-    environment:
-      - DEFAULT_EMAIL=skill@blaataap.com
-      - NGINX_PROXY_CONTAINER=nginx-proxy
-    depends_on:
-      - nginx-proxy
-    networks:
-      - web
-    labels:
-      - "com.github.nginx-proxy.nginx_proxy=true"
-
-  web:
-    image: ${REPOSITORY}:${TAG}
-    container_name: web
-    environment:
-      - VIRTUAL_HOST=skill.blaataap.com
-      - LETSENCRYPT_HOST=skill.blaataap.com
-      - LETSENCRYPT_EMAIL=skill@blaataap.com
-    networks:
-      - web
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 networks:
   web:
-    external: true
-      
+    driver: bridge
+
 
 # services:
 #   web:
