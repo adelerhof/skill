@@ -89,8 +89,14 @@ jobs:
     #     docker compose -f compose.yml pull
     #     docker compose -f compose.yml up -d
 
+    # - name: Extract tag
+    #   run: echo "TAG=ghcr.io/${{env.GITHUB_REPO}}:${{ steps.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
+
+    - name: Set repository
+      run: echo "REPOSITORY=ghcr.io/${{env.GITHUB_REPO}}" >> $GITHUB_ENV
+
     - name: Extract tag
-      run: echo "TAG=ghcr.io/${{env.GITHUB_REPO}}:${{ steps.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
+      run: echo "TAG=${{ steps.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
 
     - name: Debug TAG value
       run: echo "TAG=${{ env.TAG }}"
