@@ -1,5 +1,51 @@
 services:
-  web:
-    image: ${REPOSITORY}:${TAG}
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy:latest
     ports:
       - "80:80"
+      - :443:443
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+      - ./vhost.d:/etc/nginx/vhost.d
+      - ./html:/usr/share/nginx/html
+      - ./conf.d:/etc/nginx/conf.d
+    environment:
+      - ENABLE_IPV6=true
+    networks:
+      - web
+
+  acme-companion:
+    image: nginxproxy/acme-companion:latest
+    container_name: acme-companion
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+      - ./acme:/etc/acme.sh
+    environment:
+      - DEFAULT_EMAIL=skill@blaataap.com
+    depends_on:
+      - nginx-proxy
+    networks:
+      - web
+
+  web:
+    image: ${REPOSITORY}:${TAG}
+    container_name: web
+    environment:
+      - VIRTUAL_HOST=skill.blaataap.com
+      - LETSENCRYPT_HOST=skill.blaataap.com
+      - LETSENCRYPT_EMAIL=skill@blaataap.com
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
+      
+
+# services:
+#   web:
+#     image: ${REPOSITORY}:${TAG}
+#     ports:
+#       - "80:80"
