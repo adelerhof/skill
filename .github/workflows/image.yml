@@ -109,10 +109,10 @@ jobs:
         TAG: ${{ env.TAG }}
 
     - name: Adjust permissions for Certbot directory
-      run: sudo chmod -R 777 /home/ghrunner/actions-runner/_work/skill/skill/.certbot/conf
+      run: chmod -R 777 /home/ghrunner/actions-runner/_work/skill/skill/.certbot/conf
 
     - name: Clean up repository
-      run: sudo rm -rf /home/ghrunner/actions-runner/_work/skill/skill
+      run: rm -rf /home/ghrunner/actions-runner/_work/skill/skill
 
     - name: Start services
       run: docker-compose up -d
