@@ -19,4 +19,4 @@ COPY index.html .
 ENTRYPOINT [ "./kitty" ]
 
 # http server listens on port 85.
-EXPOSE 8000
+EXPOSE 80

@@ -57,7 +57,7 @@ services:
     # Expose the port your application listens on *inside* the container
     # DO NOT use 'ports:' here, nginx-proxy handles external exposure.
     expose:
-      - "8000" # Replace 8000 with the port your app listens on
+      - "80" # Replace 8000 with the port your app listens on
     networks:
       - webproxy # Must be on the same network as the proxy
     # Add any other volumes, env vars, etc. your app needs
