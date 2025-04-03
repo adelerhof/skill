@@ -104,26 +104,11 @@ jobs:
     - name: Deploy Docker Compose
       run: |
         docker compose -f compose.yml pull
+        docker compose -f compose.yml up --build -d --remove-orphans
         # docker compose -f compose.yml up -d
       env:
         TAG: ${{ env.TAG }}
 
-    - name: Adjust permissions for Certbot directory
-      run: chmod -R 777 /home/ghrunner/actions-runner/_work/skill/skill/.certbot/conf
-
-    - name: Clean up repository
-      run: rm -rf /home/ghrunner/actions-runner/_work/skill/skill
-
-    - name: Start services
-      run: docker-compose up -d
-  
-
-    - name: Obtain Let's Encrypt certificate
-      run: |
-        docker-compose run certbot certonly --webroot --webroot-path=/var/www/certbot --email your-email@example.com --agree-tos --no-eff-email -d skill.blaataap.com
-
-    - name: Restart Nginx
-      run: docker-compose restart nginx
 
     # - name: Set image tag
     #   run: echo "TAG=$(echo ${{ steps.docker_build.outputs.tags }} | cut -d ',' -f 1)" >> $GITHUB_ENV
