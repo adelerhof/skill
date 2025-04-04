@@ -1,0 +1,24 @@
+services:
+  loki:
+    restart: unless-stopped
+    image: grafana/loki:latest
+    ports:
+      - '3100:3100'
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+      - loki-data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=Blaataap_01
+    # networks:
+    #   - loki-net
+    depends_on:
+      - loki
+
+volumes:
+  loki-data:

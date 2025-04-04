@@ -1,0 +1,48 @@
+auth_enabled: false # Disable authentication
+
+server:
+  http_listen_port: 3100 # Port for Loki to listen on
+
+common:
+  path_prefix: /tmp/loki # Temporary storage path
+  instance_addr: 127.0.0.1 # Address for Loki to bind to
+  storage:
+    filesystem:
+      chunks_directory: /tmp/loki/chunks # Directory for chunk storage
+      rules_directory: /tmp/loki/rules # Directory for rules storage
+  replication_factor: 1 # Replication factor for storage
+  ring:
+    kvstore:
+      store: inmemory # In-memory key-value store for ring management
+
+query_range:
+  results_cache: # Enable caching for query results
+    cache: # Cache in memory
+      embedded_cache:
+        enabled: true # Use embedded cache
+        max_size_mb: 100 # Maximum size of the cache in MB
+
+schema_config: # Schema configuration
+  configs: # List of schema configurations
+    - from: 2020-05-15 # Date from which this schema is valid
+      store: tsdb # Storage engine
+      object_store: filesystem # Where to store objects
+      schema: v13 # Schema version
+      index:
+        prefix: index_ # Prefix for index files
+        period: 24h # Period for index files
+
+ruler: # Ruler configuration
+  alertmanager_url: http://localhost:9093 # URL for Alertmanager
+
+analytics: # Analytics configuration
+  reporting_enabled: false # Disable reporting
+
+limits_config: # Configuration for limits
+  retention_period: 30d # Retention period for logs
+
+compactor: # Compactor configuration
+  working_directory: /tmp/loki/retention # Directory for compactor working files
+  delete_request_store: filesystem # Use filesystem for delete requests
+  retention_enabled: true # Enable retention
+  retention_delete_delay: 2h # Delay for retention delete
