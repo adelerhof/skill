@@ -98,29 +98,8 @@ sudo systemctl restart docker
 
 Source:
 
-[Adding self-hosted runners - GitHub Docs](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners)
 [Centralize and visualize Docker logs in Grafana with Loki](https://daniel.es/blog/centralize-and-visualize-docker-logs-in-grafana-with-loki/)
 
+[grafana container](https://hub.docker.com/r/grafana/grafana)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-sudo ufw allow 3100/tcp
-
-
-```bash
-vi loki-config.yaml
-```
+[loki container](https://hub.docker.com/r/grafana/loki)
