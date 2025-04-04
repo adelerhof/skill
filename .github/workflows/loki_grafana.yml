@@ -22,4 +22,4 @@ jobs:
         # Pull the latest images
         docker compose -f logging/logging-docker-compose.yml pull
         # Build and start the containers in detached mode
-        docker compose -f logging/logging-docker-compose.yml up -d --remove-orphans --force-recreate
+        docker compose -f logging/logging-docker-compose.yml up -d --remove-orphans
