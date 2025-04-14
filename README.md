@@ -221,6 +221,56 @@ This is a popular and well-maintained solution using two specialized Docker imag
 10. `nginx-proxy` automatically detects the new certificate and reloads its configuration to start using HTTPS for `skill.blaataap.com`.
 11. The companion container periodically checks certificates and renews them automatically before they expire.
 
+#### Block HTTP methods like TRACE and OPTIONS
+
+The configuration of the `nginx-proxy` container is done automatically based on the environment variables you set in your `docker-compose.yml` file. However, if you want to customize the Nginx configuration further, you can do so by creating a custom Nginx configuration file and mounting it into the container.
+To block HTTP methods like TRACE and OPTIONS, you can create a custom configuration file named `block-http-methods.conf` with the following content:
+
+```nginx
+# skill_blaataap_com.conf
+if ($request_method = OPTIONS) {
+  return 405; # 405 Method Not Allowed is the most appropriate code
+}
+```
+
+Then, you can mount this configuration file into the `nginx-proxy` container by adding the following volume to your `docker-compose.yml` file:
+
+```yaml
+services:
+  nginx-proxy:
+...
+    volumes:
+...
+      - ./skill_blaataap_com.conf:/etc/nginx/vhost.d/skill.blaataap.com:ro # Mount custom block OPTIONS
+```
+This will ensure that the custom configuration is loaded when the `nginx-proxy` container starts. The `:ro` at the end of the volume mount makes it read-only, which is a good security practice.
+
+[Custom Nginx Configuration](https://github.com/nginx-proxy/nginx-proxy/tree/main/docs#custom-nginx-configuration)
+
+[Proxy-wide](https://github.com/nginx-proxy/nginx-proxy/tree/main/docs#per-virtual_host)
+
+##### Test the configuration
+```bash
+curl -i -X OPTIONS https://skill.blaataap.com
+
+HTTP/2 405
+server: nginx
+date: Mon, 14 Apr 2025 13:00:26 GMT
+content-type: text/html
+content-length: 150
+strict-transport-security: max-age=31536000
+
+<html>
+<head><title>405 Not Allowed</title></head>
+<body>
+<center><h1>405 Not Allowed</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+```
+
+
+
 ## References
 
 Source:
@@ -231,4 +281,5 @@ Source:
 [Networking With Docker Compose](https://www.netmaker.io/resources/docker-compose-network)
 [nginxproxy-acme-companion](https://hub.docker.com/r/nginxproxy/acme-companion#:~:text=It%20handles%20the%20automated%20creation,containers%20through%20the%20ACME%20protocol.)
 [nginxproxy/nginx-proxy]([nginxproxy/nginx-proxy - Docker Image | Docker Hub](https://hub.docker.com/r/nginxproxy/nginx-proxy))
-
+[Custom Nginx Configuration](https://github.com/nginx-proxy/nginx-proxy/tree/main/docs#custom-nginx-configuration)
+[Proxy-wide](https://github.com/nginx-proxy/nginx-proxy/tree/main/docs#per-virtual_host)
