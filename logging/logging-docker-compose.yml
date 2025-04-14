@@ -8,6 +8,8 @@ services:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
       - loki-data:/loki
     command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - logging
 
   grafana:
     image: grafana/grafana:latest
@@ -15,10 +17,15 @@ services:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=Blaataap_01
-    # networks:
-    #   - loki-net
+    networks:
+      - logging
     depends_on:
       - loki
+
+# Define the shared network
+networks:
+  logging:
+    name: logging_network # Optional: give the network a specific name
 
 volumes:
   loki-data:

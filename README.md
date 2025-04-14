@@ -269,7 +269,33 @@ strict-transport-security: max-age=31536000
 </html>
 ```
 
+#### Set extre headers
 
+Add extra header config to the file `skill_blaataap_com.conf`:
+
+```nginx
+# Prevent Clickjacking
+add_header X-Frame-Options "DENY" always;
+
+# Basic Content Security Policy (adjust as needed for your app)
+# Allows resources (scripts, css, images etc.) only from the same origin.
+add_header Content-Security-Policy "default-src 'self'" always;
+```
+
+#### Test the configuration
+
+```bash
+curl -i https://skill.blaataap.com
+HTTP/2 200
+server: nginx
+date: Mon, 14 Apr 2025 13:24:50 GMT
+content-type: text/html; charset=utf-8
+content-length: 344
+accept-ranges: bytes
+last-modified: Wed, 09 Apr 2025 11:44:39 GMT
+strict-transport-security: max-age=31536000
+x-frame-options: DENY
+content-security-policy: default-src 'self'`
 
 ## References
 
