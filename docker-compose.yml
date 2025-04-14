@@ -17,7 +17,7 @@ services:
       # Allow nginx-proxy to detect other containers
       - /var/run/docker.sock:/tmp/docker.sock:ro # Read Only is safer
       - ./show_version.conf:/etc/nginx/conf.d/show_version.conf:ro # Mount custom config
-      - ./skill_blaataap_com.conf:/etc/nginx/conf.d/skill_blaataap_com.conf:ro # Mount custom block OPTIONS
+      - ./skill_blaataap_com.conf:/etc/nginx/vhost.d/skill_blaataap_com.conf:ro # Mount custom block OPTIONS
     networks:
       - webproxy # Use a dedicated network
     restart: always
