@@ -17,13 +17,14 @@ WORKDIR /app
 
 # Copy the Python script into the container
 COPY /health_check/api.py .
+COPY /health_check/health_check.py .
 
 # Expose the default port for documentation purposes
 # The actual port used depends on the PORT env var passed at runtime
 EXPOSE 5000
 
-# Add health check for the backend
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl --fail http://localhost:${PORT}/api/health || exit 1
+# Add health check for the backend using Python script
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD python3 health_check.py
 
 # Run the Python script when the container starts
 # The script now reads the PORT env var internally
