@@ -144,9 +144,6 @@ jobs:
           ghcr.io/${{env.GITHUB_REPO}}-healthcheck-api:latest
           ghcr.io/${{env.GITHUB_REPO}}-healthcheck-api:buildbyghactions
 
-    - name: Set repository in environment variable
-      run: echo "REPOSITORY=ghcr.io/${{env.GITHUB_REPO}}" >> $GITHUB_ENV
-
     - name: Set tag in environment variable
       run: echo "TAG=${{ steps.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
 
@@ -157,6 +154,9 @@ jobs:
       contents: write
       packages: write
     steps:
+    - name: Set repository in environment variable
+      run: echo "REPOSITORY=ghcr.io/${{env.GITHUB_REPO}}" >> $GITHUB_ENV
+
     - name: Deploy Docker Compose
       run: |
         # Pull the latest images
