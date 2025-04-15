@@ -68,7 +68,8 @@ services:
 ##
   # Define the service for your Flask API
   api:
-    image: ${REPOSITORY}-healthcheck-api:${TAG}
+    # image: ${REPOSITORY}-healthcheck-api:${TAG}
+    image: ghcr.io/${{env.GITHUB_REPO}}-healthcheck-api:${TAG}
 
     # Set a specific container name, similar to --name in podman run
     container_name: healthcheck-api
