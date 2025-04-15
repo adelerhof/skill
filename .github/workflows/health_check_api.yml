@@ -95,8 +95,8 @@ jobs:
     - name: Deploy Docker Compose
       run: |
         # Pull the latest images
-        docker compose -f ./health_check/docker-compose.yml pull
+        docker compose -f health_check/docker-compose.yml pull
         # Build and start the containers in detached mode
-        docker compose -f ./health_check/docker-compose.yml up --build -d --remove-orphans --force-recreate
+        docker compose -f health_check/docker-compose.yml up --build -d --remove-orphans --force-recreate
       env:
         TAG: ${{ env.TAG }}
