@@ -154,6 +154,16 @@ jobs:
       contents: write
       packages: write
     steps:
+
+    - name: Set release
+      run: |
+        # Extract organization name and repository name from GITHUB_REPOSITORY
+        # GITHUB_REPOSITORY is in the format "owner/repo"
+        echo "GITHUB_ORG="$(echo ${GITHUB_REPOSITORY} | sed 's/\/docker-.*//' ) >> $GITHUB_ENV
+        echo "GITHUB_REPO="$(echo ${GITHUB_REPOSITORY} | sed 's/.*\/docker-//' ) >> $GITHUB_ENV
+        echo "GITHUB_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
+        cat $GITHUB_ENV
+
     - name: Set repository in environment variable
       run: echo "REPOSITORY=ghcr.io/${{env.GITHUB_REPO}}" >> $GITHUB_ENV
 
