@@ -89,7 +89,7 @@ services:
     # Mounts the current directory on the host (.) into /app in the container
     # This allows the auto-reloader (with FLASK_DEBUG=1) to see code changes
     volumes:
-      - .:/app
+      - ./health_check:/app
 
 # Networks and volumes are usually created automatically by Compose if not explicitly defined
 ##
