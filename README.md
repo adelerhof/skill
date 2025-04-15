@@ -132,10 +132,12 @@ docker compose watch
 ### useful commands
 
 ```bash
-docker compose up -d
-docker compose ps
+docker compose up -d # run in background
+docker compose ps # list containers
 docker compose stop # keeps the containers
 docker compose down # remove the containers, so storage/status is gone
+docker network ls # list networks
+docker network inspect webproxy_network # inspect network
 ```
 
 ```bash

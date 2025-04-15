@@ -22,6 +22,9 @@ COPY /health_check/api.py .
 # The actual port used depends on the PORT env var passed at runtime
 EXPOSE 5000
 
+# Add health check for the backend
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl --fail http://localhost:${PORT}/api/health || exit 1
+
 # Run the Python script when the container starts
 # The script now reads the PORT env var internally
 CMD ["python3", "api.py"]

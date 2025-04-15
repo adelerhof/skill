@@ -37,15 +37,6 @@ jobs:
         DEFAULT_BUMP: minor
         GIT_API_TAGGING : true
 
-    # - name: Set release
-    #   run: |
-    #     # Extract organization name and repository name from GITHUB_REPOSITORY
-    #     # GITHUB_REPOSITORY is in the format "owner/repo"
-    #     echo "GITHUB_ORG="$(echo ${GITHUB_REPOSITORY} | sed 's/\/docker-.*//' ) >> $GITHUB_ENV
-    #     echo "GITHUB_REPO="$(echo ${GITHUB_REPOSITORY} | sed 's/.*\/docker-//' ) >> $GITHUB_ENV
-    #     echo "GITHUB_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
-    #     cat $GITHUB_ENV
-
     - name: Checkout repository
       # https://github.com/actions/checkout
       uses: actions/checkout@v4
@@ -79,16 +70,6 @@ jobs:
           ghcr.io/${{ github.repository }}:latest
           ghcr.io/${{ github.repository }}:buildbyghactions
 
-    # - name: Set repository in environment variable
-    #   run: echo "REPOSITORY=ghcr.io/${{github.repository}}" >> $GITHUB_ENV
-
-    # - name: Set tag in environment variable
-    #   run: echo "TAG=${{ steps.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
-
-
-
-
-
   build-healthcheck-api:
     runs-on: self-hosted # Use a self-hosted runner
     # runs-on: ubuntu-latest # Use this if you don't have a self-hosted runner
@@ -112,15 +93,6 @@ jobs:
         WITH_V: false
         DEFAULT_BUMP: minor
         GIT_API_TAGGING : true
-
-    # - name: Set release
-    #   run: |
-    #     # Extract organization name and repository name from GITHUB_REPOSITORY
-    #     # GITHUB_REPOSITORY is in the format "owner/repo"
-    #     echo "GITHUB_ORG="$(echo ${GITHUB_REPOSITORY} | sed 's/\/docker-.*//' ) >> $GITHUB_ENV
-    #     echo "GITHUB_REPO="$(echo ${GITHUB_REPOSITORY} | sed 's/.*\/docker-//' ) >> $GITHUB_ENV
-    #     echo "GITHUB_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
-    #     cat $GITHUB_ENV
 
     - name: Checkout repository
       # https://github.com/actions/checkout
@@ -154,10 +126,6 @@ jobs:
           ghcr.io/${{github.repository}}-healthcheck-api:latest
           ghcr.io/${{github.repository}}-healthcheck-api:buildbyghactions
 
-
-    # - name: Set tag in environment variable
-    #   run: echo "TAG=${{ steps.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
-
   deploy-kitty-and-healthcheck-api:
     needs: [build-kitty, build-healthcheck-api] # Ensure the build jobs are completed before deploying
     runs-on: self-hosted # Use a self-hosted runner
@@ -169,10 +137,8 @@ jobs:
       REGISTRY: ghcr.io
       REPOSITORY: ghcr.io/${{ github.repository }}
       TAG: ${{ needs.build-kitty.outputs.tag }}
-      # GITHUB_SHA: ${{ github.sha }}
       GITHUB_REPO: ${{ github.repository }}
       GITHUB_ORG: ${{ github.repository_owner }}
-      # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       REPOSITORY_HEALTHCHECK_API: ghcr.io/${{ github.repository }}-healthcheck-api
     steps:
 
@@ -184,25 +150,8 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Set repository in environment variable
-      run: cat $GITHUB_ENV
-
-#     - name: Set release
-#       run: |
-#         # Extract organization name and repository name from GITHUB_REPOSITORY
-#         # GITHUB_REPOSITORY is in the format "owner/repo"
-#         echo "GITHUB_ORG="$(echo ${GITHUB_REPOSITORY} | sed 's/\/docker-.*//' ) >> $GITHUB_ENV
-#         echo "GITHUB_REPO="$(echo ${GITHUB_REPOSITORY} | sed 's/.*\/docker-//' ) >> $GITHUB_ENV
-#         echo "REPOSITORY=ghcr.io/${{github.repository}}" >> $GITHUB_ENV
-#         echo "GITHUB_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
-#         cat $GITHUB_ENV
-
-# ${REPOSITORY}:${TAG}
-
-  #   - name: Set repository in environment variable
-  #     run: echo "REPOSITORY=ghcr.io/${{github.repository}}" >> $GITHUB_ENV
-
-
+    # - name: Set repository in environment variable
+    #   run: cat $GITHUB_ENV
 
     - name: Deploy Docker Compose
       run: |
@@ -210,5 +159,3 @@ jobs:
         docker compose -f docker-compose.yml pull
         # Build and start the containers in detached mode
         docker compose -f docker-compose.yml up --build -d --remove-orphans --force-recreate
-  #     env:
-  #       TAG: ${{ env.TAG }}
