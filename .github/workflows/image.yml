@@ -116,7 +116,7 @@ jobs:
     #     echo "GITHUB_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
     #     cat $GITHUB_ENV
 
-    - name: Checkout repository
+    # - name: Checkout repository
     #   # https://github.com/actions/checkout
     #   uses: actions/checkout@v4
 
