@@ -8,7 +8,7 @@ RUN apk add --no-cache python3 py3-pip && \
     apk update && \
     apk upgrade --no-cache --available && sync # --no-cache for upgrade too
 
-COPY requirements.txt requirements.txt
+COPY /health_check/requirements.txt requirements.txt
 # Consider creating a virtual environment
 RUN pip install --no-cache-dir -r requirements.txt --break-system-packages
 
@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt --break-system-packages
 WORKDIR /app
 
 # Copy the Python script into the container
-COPY api.py .
+COPY /health_check/api.py .
 
 # Expose the default port for documentation purposes
 # The actual port used depends on the PORT env var passed at runtime
