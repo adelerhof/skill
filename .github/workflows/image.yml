@@ -152,13 +152,16 @@ jobs:
     # - name: Set tag in environment variable
     #   run: echo "TAG=${{ steps.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
 
-  # deploy-kitty-and-healthcheck-api:
-  #   runs-on: self-hosted # Use a self-hosted runner
-  #   # runs-on: ubuntu-latest # Use this if you don't have a self-hosted runner
-  #   permissions: # Set permissions for the workflow
-  #     contents: write
-  #     packages: write
-  #   steps:
+  deploy-kitty-and-healthcheck-api:
+    runs-on: self-hosted # Use a self-hosted runner
+    # runs-on: ubuntu-latest # Use this if you don't have a self-hosted runner
+    permissions: # Set permissions for the workflow
+      contents: write
+      packages: write
+    steps:
+
+    - name: Set repository in environment variable
+      run: cat $GITHUB_ENV
 
   #   - name: Set release
   #     run: |
