@@ -65,6 +65,34 @@ services:
     #   - ./app-data:/data
     restart: unless-stopped # Or 'always' if preferred
 
+##
+  # Define the service for your Flask API
+  api:
+    image: ${REPOSITORY}-healthcheck-api:${TAG}
+
+    # Set a specific container name, similar to --name in podman run
+    container_name: healthcheck-api
+
+    # Load environment variables from the specified file into the container
+    # This makes PORT, FLASK_DEBUG etc. available inside
+    env_file:
+      - .env
+
+    # Define port mapping: HOST:CONTAINER
+    # Compose automatically reads the .env file in the same directory
+    # and substitutes ${PORT} before starting the container.
+    ports:
+      - "${PORT}:${PORT}" # e.g., maps host 8080 to container 8080 if PORT=8080 in .env
+    networks:
+      - webproxy # Must be on the same network as the proxy
+    # Define volume mounting: HOST_PATH:CONTAINER_PATH
+    # Mounts the current directory on the host (.) into /app in the container
+    # This allows the auto-reloader (with FLASK_DEBUG=1) to see code changes
+    volumes:
+      - .:/app
+
+# Networks and volumes are usually created automatically by Compose if not explicitly defined
+##
 # Define the shared network
 networks:
   webproxy:
