@@ -72,17 +72,18 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: |
-          ghcr.io/${{env.GITHUB_REPO}}:${{env.GITHUB_SHA}}
-          ghcr.io/${{env.GITHUB_REPO}}:scan
-          ghcr.io/${{env.GITHUB_REPO}}:${{ steps.bump_version.outputs.new_tag }}
-          ghcr.io/${{env.GITHUB_REPO}}:latest
-          ghcr.io/${{env.GITHUB_REPO}}:buildbyghactions
+          ghcr.io/${{ github.repository }}
+          ghcr.io/${{ github.repository }}:${{ github.sha }}
+          ghcr.io/${{ github.repository }}:scan
+          ghcr.io/${{ github.repository }}:${{ steps.bump_version.outputs.new_tag }}
+          ghcr.io/${{ github.repository }}:latest
+          ghcr.io/${{ github.repository }}:buildbyghactions
 
-    - name: Set repository in environment variable
-      run: echo "REPOSITORY=ghcr.io/${{env.GITHUB_REPO}}" >> $GITHUB_ENV
+    # - name: Set repository in environment variable
+    #   run: echo "REPOSITORY=ghcr.io/${{github.repository}}" >> $GITHUB_ENV
 
-    - name: Set tag in environment variable
-      run: echo "TAG=${{ steps.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
+    # - name: Set tag in environment variable
+    #   run: echo "TAG=${{ steps.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
 
 
 
@@ -94,6 +95,8 @@ jobs:
     permissions: # Set permissions for the workflow
       contents: write
       packages: write
+    outputs:
+      tag: ${{ steps.bump_version.outputs.new_tag }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -145,11 +148,11 @@ jobs:
         file: ./health_check/Dockerfile
         push: true
         tags: |
-          ghcr.io/${{env.GITHUB_REPO}}-healthcheck-api:${{env.GITHUB_SHA}}
-          ghcr.io/${{env.GITHUB_REPO}}-healthcheck-api:scan
-          ghcr.io/${{env.GITHUB_REPO}}-healthcheck-api:${{ steps.bump_version.outputs.new_tag }}
-          ghcr.io/${{env.GITHUB_REPO}}-healthcheck-api:latest
-          ghcr.io/${{env.GITHUB_REPO}}-healthcheck-api:buildbyghactions
+          ghcr.io/${{github.repository}}-healthcheck-api:${{ github.sha }}
+          ghcr.io/${{github.repository}}-healthcheck-api:scan
+          ghcr.io/${{github.repository}}-healthcheck-api:${{ steps.bump_version.outputs.new_tag }}
+          ghcr.io/${{github.repository}}-healthcheck-api:latest
+          ghcr.io/${{github.repository}}-healthcheck-api:buildbyghactions
 
 
     # - name: Set tag in environment variable
@@ -164,13 +167,13 @@ jobs:
       packages: write
     env:
       REGISTRY: ghcr.io
-      REPOSITORY: ghcr.io/${{env.GITHUB_REPO}}
+      REPOSITORY: ghcr.io/${{ github.repository }}
       TAG: ${{ needs.build-kitty.outputs.tag }}
       # GITHUB_SHA: ${{ github.sha }}
       GITHUB_REPO: ${{ github.repository }}
       GITHUB_ORG: ${{ github.repository_owner }}
       # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      REPOSITORY_HEALTHCHECK_API: ghcr.io/${{env.GITHUB_REPO}}-healthcheck-api
+      REPOSITORY_HEALTHCHECK_API: ghcr.io/${{ github.repository }}-healthcheck-api
     steps:
 
     - name: Set repository in environment variable
@@ -182,14 +185,14 @@ jobs:
 #         # GITHUB_REPOSITORY is in the format "owner/repo"
 #         echo "GITHUB_ORG="$(echo ${GITHUB_REPOSITORY} | sed 's/\/docker-.*//' ) >> $GITHUB_ENV
 #         echo "GITHUB_REPO="$(echo ${GITHUB_REPOSITORY} | sed 's/.*\/docker-//' ) >> $GITHUB_ENV
-#         echo "REPOSITORY=ghcr.io/${{env.GITHUB_REPO}}" >> $GITHUB_ENV
+#         echo "REPOSITORY=ghcr.io/${{github.repository}}" >> $GITHUB_ENV
 #         echo "GITHUB_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
 #         cat $GITHUB_ENV
 
 # ${REPOSITORY}:${TAG}
 
   #   - name: Set repository in environment variable
-  #     run: echo "REPOSITORY=ghcr.io/${{env.GITHUB_REPO}}" >> $GITHUB_ENV
+  #     run: echo "REPOSITORY=ghcr.io/${{github.repository}}" >> $GITHUB_ENV
 
   #   - name: Deploy Docker Compose
   #     run: |
