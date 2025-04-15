@@ -176,6 +176,14 @@ jobs:
       REPOSITORY_HEALTHCHECK_API: ghcr.io/${{ github.repository }}-healthcheck-api
     steps:
 
+    - name: Log in to the Container registry
+      # https://github.com/docker/login-action
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Set repository in environment variable
       run: cat $GITHUB_ENV
 
@@ -193,6 +201,8 @@ jobs:
 
   #   - name: Set repository in environment variable
   #     run: echo "REPOSITORY=ghcr.io/${{github.repository}}" >> $GITHUB_ENV
+
+
 
     - name: Deploy Docker Compose
       run: |
