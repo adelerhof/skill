@@ -4,13 +4,13 @@ FROM docker.io/library/golang:1.24-alpine3.21 AS builder
 # Build the main application
 WORKDIR /build/app
 # Assumes main app source is in the root of the build context
-COPY *.go .
+COPY kitty.go .
 RUN CGO_ENABLED=0 GOOS=linux GO111MODULE='auto' go build -a -o skill .
 
 # Build the health checker utility
 WORKDIR /build/healthchecker
 # Copy the healthchecker source code
-COPY healthchecker.go .
+COPY healthchecker/healthchecker.go .
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o healthchecker . # Build the healthchecker
 
 
