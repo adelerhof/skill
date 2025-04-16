@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// Target URL for the health check (matches the service inside the container)
-	url := "http://127.0.0.1:3000/"
+	url := "http://127.0.0.1:4000/"
 	// Timeout for the HTTP request (should be less than the Docker HEALTHCHECK --timeout)
 	timeout := 4 * time.Second // e.g., 4 seconds, less than the 5s HEALTHCHECK timeout
 
