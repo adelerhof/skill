@@ -12,30 +12,44 @@ jobs:
   lint:
     name: Lint Configuration Files
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: '0' # Fetch all history for all branches and tags
+        # This is needed to get the full commit history for the PR
+        # and to ensure that the workflow can access all branches and tags
+        # in the repository. This is important for workflows that need
+        # to access the full commit history, such as those that use
+        # the `git` command to check out a specific commit or branch.
+        # If you don't need the full commit history, you can set this to '1'
+        # to fetch only the latest commit for the current branch.
 
     # Lint YAML files
     - name: Lint YAML files
-      uses: github/super-linter@v5
+      uses: super-linter/super-linter@v7.3.0
       env:
-        VALIDATE_YAML: true
-        DEFAULT_BRANCH: main
+        # VALIDATE_YAML: true
+        # DEFAULT_BRANCH: main
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # Lint JSON files
-    - name: Lint JSON files
-      run: |
-        find . -name "*.json" -print0 | xargs -0 -I {} jq . {} > /dev/null
+    # # Lint JSON files
+    # - name: Lint JSON files
+    #   run: |
+    #     find . -name "*.json" -print0 | xargs -0 -I {} jq . {} > /dev/null
 
-    # Lint Dockerfiles
-    - name: Lint Dockerfiles
-      uses: hadolint/hadolint-action@v3.1.0
-      with:
-        dockerfile: "**/Dockerfile"
+    # # Lint Dockerfiles
+    # - name: Lint Dockerfiles
+    #   uses: hadolint/hadolint-action@v3.1.0
+    #   with:
+    #     dockerfile: "**/Dockerfile"
 
-    # Lint Shell scripts
-    - name: Lint Shell scripts
-      run: |
-        find . -name "*.sh" -print0 | xargs -0 shellcheck
+    # # Lint Shell scripts
+    # - name: Lint Shell scripts
+    #   run: |
+    #     find . -name "*.sh" -print0 | xargs -0 shellcheck
