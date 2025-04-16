@@ -61,8 +61,8 @@ services:
       - .env # Load environment variables from .env file
     expose:
       - "${KITTY_PORT}" # The port your app listens on
-    ports:
-      - "${KITTY_PORT}:${KITTY_PORT}" # e.g., maps host 8080 to container 8080 if PORT=8080 in .env
+    # ports:
+      # - "${KITTY_PORT}:${KITTY_PORT}" # e.g., maps host 8080 to container 8080 if PORT=8080 in .env
     networks:
       - webproxy # Must be on the same network as the proxy
     # Add any other volumes, env vars, etc. your app needs
@@ -90,12 +90,13 @@ services:
     # This makes PORT, FLASK_DEBUG etc. available inside
     env_file:
       - .env
-
+    expose:
+      - "${PORT}" # The port your app listens on
     # Define port mapping: HOST:CONTAINER
     # Compose automatically reads the .env file in the same directory
     # and substitutes ${PORT} before starting the container.
-    ports:
-      - "${PORT}:${PORT}" # e.g., maps host 8080 to container 8080 if PORT=8080 in .env
+    # ports:
+    #   - "${PORT}:${PORT}" # e.g., maps host 8080 to container 8080 if PORT=8080 in .env
     networks:
       - webproxy # Must be on the same network as the proxy
     # Define volume mounting: HOST_PATH:CONTAINER_PATH
