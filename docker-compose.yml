@@ -78,6 +78,7 @@ services:
     environment:
       - VIRTUAL_HOST=skill.blaataap.com
       - VIRTUAL_PATH=/api
+      - VIRTUAL_PORT=${PORT} # The port your app listens on
     # --- END CRITICAL VARIABLES ---
 
     # Load environment variables from the specified file into the container
