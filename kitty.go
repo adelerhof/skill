@@ -1,6 +1,7 @@
 /*
 Serve is a very simple static file server in go
 Usage:
+
 	-p="8100": port to serve on
 	-d=".":    the directory of static files to host
 
@@ -16,7 +17,7 @@ import (
 )
 
 func main() {
-	port := flag.String("p", "80", "port to serve on")
+	port := flag.String("p", "4000", "port to serve on")
 	directory := flag.String("d", ".", "the directory of static file to host")
 	flag.Parse()
 

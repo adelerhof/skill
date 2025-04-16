@@ -36,11 +36,18 @@ COPY --from=builder /build/healthchecker/healthchecker /healthchecker
 COPY White_Persian_Cat.jpg .
 COPY index.html .
 
+
+# Create a group and user
+RUN addgroup -S skill_group && adduser -S skill_user -G skill_group
+
+# Switch to the new user
+USER skill_user
+
 # executable - Using absolute path for clarity
 ENTRYPOINT [ "/skill" ]
 
-# http server listens on port 80.
-EXPOSE 80
+# http server listens on port 4000.
+EXPOSE 4000
 
 # Health check instruction using the Go utility
 # Note: Using JSON array format for CMD is recommended

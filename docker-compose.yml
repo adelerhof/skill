@@ -50,6 +50,7 @@ services:
     # --- CRITICAL NGINX-PROXY/LETSENCRYPT VARIABLES ---
     environment:
       - VIRTUAL_HOST=skill.blaataap.com
+      - VIRTUAL_PORT=4000 # The port your app listens on
       - LETSENCRYPT_HOST=skill.blaataap.com
       # Optional but recommended: Specify email per-service if needed
       - LETSENCRYPT_EMAIL=skill@blaataap.com
@@ -57,7 +58,7 @@ services:
     # Expose the port your application listens on *inside* the container
     # DO NOT use 'ports:' here, nginx-proxy handles external exposure.
     expose:
-      - "80" # The port your app listens on
+      - "4000" # The port your app listens on
     networks:
       - webproxy # Must be on the same network as the proxy
     # Add any other volumes, env vars, etc. your app needs
