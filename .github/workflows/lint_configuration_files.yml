@@ -1,0 +1,41 @@
+name: Lint Configuration Files
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  lint:
+    name: Lint Configuration Files
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Lint YAML files
+    - name: Lint YAML files
+      uses: github/super-linter@v5
+      env:
+        VALIDATE_YAML: true
+        DEFAULT_BRANCH: main
+
+    # Lint JSON files
+    - name: Lint JSON files
+      run: |
+        find . -name "*.json" -print0 | xargs -0 -I {} jq . {} > /dev/null
+
+    # Lint Dockerfiles
+    - name: Lint Dockerfiles
+      uses: hadolint/hadolint-action@v2
+      with:
+        dockerfile: "**/Dockerfile"
+
+    # Lint Shell scripts
+    - name: Lint Shell scripts
+      run: |
+        find . -name "*.sh" -print0 | xargs -0 shellcheck
