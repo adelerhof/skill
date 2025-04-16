@@ -271,7 +271,7 @@ strict-transport-security: max-age=31536000
 </html>
 ```
 
-#### Set extre headers
+#### Set extra headers
 
 Add extra header config to the file `skill_blaataap_com.conf`:
 

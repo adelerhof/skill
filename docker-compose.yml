@@ -74,6 +74,12 @@ services:
     # Set a specific container name, similar to --name in podman run
     container_name: healthcheck-api
 
+    # --- CRITICAL NGINX-PROXY/LETSENCRYPT VARIABLES ---
+    environment:
+      - VIRTUAL_HOST=skill.blaataap.com
+      - VIRTUAL_PATH=/api
+    # --- END CRITICAL VARIABLES ---
+
     # Load environment variables from the specified file into the container
     # This makes PORT, FLASK_DEBUG etc. available inside
     env_file:
