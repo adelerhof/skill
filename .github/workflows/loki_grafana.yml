@@ -3,9 +3,9 @@ name: Loki and Grafana CI/CD
 # Triggers the workflow on push or pull request events
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 permissions: read-all
 
 env:
@@ -17,9 +17,9 @@ jobs:
     permissions: # Set permissions for the workflow
       contents: write
     steps:
-    - name: Deploy Docker Compose
-      run: |
-        # Pull the latest images
-        docker compose -f logging/logging-docker-compose.yml pull
-        # Build and start the containers in detached mode
-        docker compose -f logging/logging-docker-compose.yml up -d --remove-orphans
+      - name: Deploy Docker Compose
+        run: |
+          # Pull the latest images
+          docker compose -f logging/logging-docker-compose.yml pull
+          # Build and start the containers in detached mode
+          docker compose -f logging/logging-docker-compose.yml up -d --remove-orphans

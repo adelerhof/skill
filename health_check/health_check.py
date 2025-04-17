@@ -1,7 +1,8 @@
 import os
+
 import requests
 
-port = os.getenv('PORT', '5000')
+port = os.getenv("PORT", "5000")
 url = f"http://localhost:{port}/api/health"
 
 try:

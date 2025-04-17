@@ -3,7 +3,7 @@ services:
     restart: unless-stopped
     image: grafana/loki:3.4
     ports:
-      - '3100:3100'
+      - "3100:3100"
     volumes:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
       - loki-data:/loki

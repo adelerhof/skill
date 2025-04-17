@@ -3,9 +3,9 @@ name: Docker Image CI
 # Triggers the workflow on push or pull request events
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 permissions: read-all
 
 env:
@@ -22,53 +22,53 @@ jobs:
       tag: ${{ steps.bump_version.outputs.new_tag }}
       # repository: ${{ steps.set_repository.outputs.repository }}
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: '0'
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: "0"
 
-    - name: Bump version and push tag
-      # https://github.com/anothrNick/github-tag-action
-      id: bump_version
-      uses: anothrNick/github-tag-action@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WITH_V: false
-        DEFAULT_BUMP: minor
-        GIT_API_TAGGING : true
+      - name: Bump version and push tag
+        # https://github.com/anothrNick/github-tag-action
+        id: bump_version
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: false
+          DEFAULT_BUMP: minor
+          GIT_API_TAGGING: true
 
-    - name: Checkout repository
-      # https://github.com/actions/checkout
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v4
 
-    - name: Log in to the Container registry
-      # https://github.com/docker/login-action
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to the Container registry
+        # https://github.com/docker/login-action
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Set up Docker Buildx
-      # https://github.com/docker/setup-buildx-action
-      id: buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        # https://github.com/docker/setup-buildx-action
+        id: buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Build and push kitty
-      # https://github.com/docker/build-push-action
-      id: docker_build
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: |
-          ghcr.io/${{ github.repository }}
-          ghcr.io/${{ github.repository }}:${{ github.sha }}
-          ghcr.io/${{ github.repository }}:scan
-          ghcr.io/${{ github.repository }}:${{ steps.bump_version.outputs.new_tag }}
-          ghcr.io/${{ github.repository }}:latest
-          ghcr.io/${{ github.repository }}:buildbyghactions
+      - name: Build and push kitty
+        # https://github.com/docker/build-push-action
+        id: docker_build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            ghcr.io/${{ github.repository }}:scan
+            ghcr.io/${{ github.repository }}:${{ steps.bump_version.outputs.new_tag }}
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:buildbyghactions
 
   build-healthcheck-api:
     runs-on: self-hosted # Use a self-hosted runner
@@ -79,52 +79,52 @@ jobs:
     outputs:
       tag: ${{ steps.bump_version.outputs.new_tag }}
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: '0'
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: "0"
 
-    - name: Bump version and push tag
-      # https://github.com/anothrNick/github-tag-action
-      id: bump_version
-      uses: anothrNick/github-tag-action@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WITH_V: false
-        DEFAULT_BUMP: minor
-        GIT_API_TAGGING : true
+      - name: Bump version and push tag
+        # https://github.com/anothrNick/github-tag-action
+        id: bump_version
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: false
+          DEFAULT_BUMP: minor
+          GIT_API_TAGGING: true
 
-    - name: Checkout repository
-      # https://github.com/actions/checkout
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v4
 
-    - name: Log in to the Container registry
-      # https://github.com/docker/login-action
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Log in to the Container registry
+        # https://github.com/docker/login-action
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Set up Docker Buildx
-      # https://github.com/docker/setup-buildx-action
-      id: buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        # https://github.com/docker/setup-buildx-action
+        id: buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Build and push healthcheck-api
-      # https://github.com/docker/build-push-action
-      id: docker_build
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        file: ./health_check/Dockerfile
-        push: true
-        tags: |
-          ghcr.io/${{github.repository}}-healthcheck-api:${{ github.sha }}
-          ghcr.io/${{github.repository}}-healthcheck-api:scan
-          ghcr.io/${{github.repository}}-healthcheck-api:${{ steps.bump_version.outputs.new_tag }}
-          ghcr.io/${{github.repository}}-healthcheck-api:latest
-          ghcr.io/${{github.repository}}-healthcheck-api:buildbyghactions
+      - name: Build and push healthcheck-api
+        # https://github.com/docker/build-push-action
+        id: docker_build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./health_check/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{github.repository}}-healthcheck-api:${{ github.sha }}
+            ghcr.io/${{github.repository}}-healthcheck-api:scan
+            ghcr.io/${{github.repository}}-healthcheck-api:${{ steps.bump_version.outputs.new_tag }}
+            ghcr.io/${{github.repository}}-healthcheck-api:latest
+            ghcr.io/${{github.repository}}-healthcheck-api:buildbyghactions
 
   deploy-kitty-and-healthcheck-api:
     needs: [build-kitty, build-healthcheck-api] # Ensure the build jobs are completed before deploying
@@ -141,21 +141,20 @@ jobs:
       GITHUB_ORG: ${{ github.repository_owner }}
       REPOSITORY_HEALTHCHECK_API: ghcr.io/${{ github.repository }}-healthcheck-api
     steps:
+      - name: Log in to the Container registry
+        # https://github.com/docker/login-action
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Log in to the Container registry
-      # https://github.com/docker/login-action
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Set repository in environment variable
+      #   run: cat $GITHUB_ENV
 
-    # - name: Set repository in environment variable
-    #   run: cat $GITHUB_ENV
-
-    - name: Deploy Docker Compose
-      run: |
-        # Pull the latest images
-        docker compose -f docker-compose.yml pull
-        # Build and start the containers in detached mode
-        docker compose -f docker-compose.yml up --build -d --remove-orphans --force-recreate
+      - name: Deploy Docker Compose
+        run: |
+          # Pull the latest images
+          docker compose -f docker-compose.yml pull
+          # Build and start the containers in detached mode
+          docker compose -f docker-compose.yml up --build -d --remove-orphans --force-recreate
