@@ -30,13 +30,15 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro # Read Only is safer
       # Use volumes shared with nginx-proxy
       - certs:/etc/nginx/certs:rw # Needs RW access
-      - vhostd:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
+      - vhostd:/etc/nginx/vhost.d:rw # Needs RW access
+      - html:/usr/share/nginx/html:rw # Needs RW access
+      - acme:/etc/acme.sh # Persist ACME account keys
     environment:
       # Set default email for Let's Encrypt registration
       - DEFAULT_EMAIL=skill@blaataap.com
       # Tell the companion which nginx-proxy container to use (by container name)
       - NGINX_PROXY_CONTAINER=nginx-proxy
+      - ACME_CA_URI=https://acme-staging-v02.api.letsencrypt.org/directory # Use staging for testing
     networks:
       - webproxy # Must be on the same network
     depends_on:
@@ -129,6 +131,7 @@ volumes:
   certs:
   vhostd:
   html:
+  acme:
 
 # Old service
 # services:
