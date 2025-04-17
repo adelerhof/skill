@@ -92,6 +92,18 @@ services:
       - .env
     expose:
       - "${PORT}" # The port your app listens on
+    # The 'expose' directive makes the port available to other containers
+    # on the same network, but not to the host machine.
+    # This is useful for internal communication between containers.
+    # If you want to access the API from the host machine, use 'ports' instead.
+    # The 'ports' directive maps a port on the host to a port on the container.
+    # This is useful for exposing the API to the outside world.
+    # For example, if your API runs on port 5000 inside the container,
+    # and you want to access it on port 8080 on the host, you would use:
+    # ports:
+    #   - "8080:5000"
+    # In this case, you would access the API at http://localhost:8080
+
     # Define port mapping: HOST:CONTAINER
     # Compose automatically reads the .env file in the same directory
     # and substitutes ${PORT} before starting the container.
