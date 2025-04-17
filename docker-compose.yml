@@ -1,5 +1,5 @@
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 
 services:
   nginx-proxy:
@@ -64,7 +64,7 @@ services:
     expose:
       - "${KITTY_PORT}" # The port your app listens on
     # ports:
-      # - "${KITTY_PORT}:${KITTY_PORT}" # e.g., maps host 8080 to container 8080 if PORT=8080 in .env
+    # - "${KITTY_PORT}:${KITTY_PORT}" # e.g., maps host 8080 to container 8080 if PORT=8080 in .env
     networks:
       - webproxy # Must be on the same network as the proxy
     # Add any other volumes, env vars, etc. your app needs
@@ -72,7 +72,7 @@ services:
     #   - ./app-data:/data
     restart: unless-stopped # Or 'always' if preferred
 
-##
+  ##
   # Define the service for your Flask API
   api:
     # image: ${REPOSITORY}-healthcheck-api:${TAG}
@@ -132,10 +132,3 @@ volumes:
   vhostd:
   html:
   acme:
-
-# Old service
-# services:
-#   web:
-#     image: ${REPOSITORY}:${TAG}
-#     ports:
-#       - "80:80"

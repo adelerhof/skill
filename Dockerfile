@@ -19,10 +19,10 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o healthchecker . # Buil
 
 
 # generate clean, final image for end users
-FROM alpine:3
+FROM alpine:3.21
 
 # Install only necessary certificates, no curl needed now
-RUN apk --no-cache add ca-certificates && \
+RUN apk --no-cache add ca-certificates=20241121-r1 && \
     apk update && \
     apk upgrade --available && sync
 

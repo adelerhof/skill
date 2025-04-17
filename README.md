@@ -7,6 +7,7 @@ skill.blaataap.com
 ```
 
 ## change hostname
+
 ```bash
 /etc/hostname
 /etc/hosts
@@ -18,6 +19,7 @@ skill.blaataap.com
 vi /etc/netplan/00-installer-config.yaml
 netplan apply
 ```
+
 ## update
 
 ```bash
@@ -40,6 +42,7 @@ sudo apt-get -y install podman buildah skopeo
 [Docker installation](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
 
 ### Add Docker's official GPG key:
+
 ```bash
 sudo apt-get update
 sudo apt-get install ca-certificates curl
@@ -49,6 +52,7 @@ sudo chmod a+r /etc/apt/keyrings/docker.asc
 ```
 
 ### Add the repository to Apt sources:
+
 ```bash
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
@@ -67,7 +71,6 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 sudo docker run hello-world
 ```
 
-
 ```bash
 unable to get image 'redis:alpine': permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock:
 ```
@@ -77,7 +80,6 @@ unable to get image 'redis:alpine': permission denied while trying to connect to
 ```bash
 docker login docker.io
 ```
-
 
 ## set permissions for regular users
 
@@ -90,6 +92,7 @@ sudo usermod -aG docker $USER
 ```
 
 ## docker compose
+
 ### Install Docker compose
 
 https://docs.docker.com/compose/install/linux/#install-using-the-repository
@@ -163,14 +166,13 @@ useradd -m -G sudo docker -s /bin/bash ghrunner
 
 [Adding self-hosted runners - GitHub Docs](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners)
 
-
 ## Used stack
 
 ### Prerequisites:
 
 1. **Local Runner Accessibility:** Your local GitHub runner machine _must_ be accessible from the public internet on ports 80 (for Let's Encrypt HTTP validation) and 443 (for HTTPS traffic). This usually involves:
-    - Configuring your router/firewall to forward incoming traffic on ports 80 and 443 to the _internal IP address_ of your local runner machine.
-    - Ensuring any firewall software on the runner machine itself allows incoming connections on ports 80 and 443.
+   - Configuring your router/firewall to forward incoming traffic on ports 80 and 443 to the _internal IP address_ of your local runner machine.
+   - Ensuring any firewall software on the runner machine itself allows incoming connections on ports 80 and 443.
 2. **DNS Record:** You need a DNS A record for `skill.blaataap.com` pointing to the _public IP address_ of the network where your local runner is located.
 3. **Docker and Docker Compose:** Ensure Docker and Docker Compose V2 are installed and working correctly on your local runner machine.
 
@@ -188,20 +190,20 @@ This is a popular and well-maintained solution using two specialized Docker imag
 #### Explanation of Key Parts:
 
 - **`services.nginx-proxy`:**
-    - `ports: ["80:80", "443:443"]`: Exposes Nginx on the host machine's standard HTTP/S ports. Traffic coming to your runner on these ports will hit this container.
-    - `volumes`: `/var/run/docker.sock` allows it to inspect other Docker containers. `certs`, `vhostd`, `html` are shared volumes for certificates, Nginx configs, and Let's Encrypt challenge files. Using named volumes (`certs:`, etc.) makes them persistent.
-    - `networks: [webproxy]`: Connects it to the custom bridge network.
+  - `ports: ["80:80", "443:443"]`: Exposes Nginx on the host machine's standard HTTP/S ports. Traffic coming to your runner on these ports will hit this container.
+  - `volumes`: `/var/run/docker.sock` allows it to inspect other Docker containers. `certs`, `vhostd`, `html` are shared volumes for certificates, Nginx configs, and Let's Encrypt challenge files. Using named volumes (`certs:`, etc.) makes them persistent.
+  - `networks: [webproxy]`: Connects it to the custom bridge network.
 - **`services.letsencrypt-companion`:**
-    - `volumes`: Shares the same volumes as `nginx-proxy` plus the Docker socket. Needs read-write (`rw`) on `certs` to store them.
-    - `environment.NGINX_PROXY_CONTAINER`: Tells the companion which proxy container to configure (must match the `container_name` or service name of the proxy).
-    - `environment.DEFAULT_EMAIL`: Your email for Let's Encrypt registration and expiry notifications.
-    - `depends_on: [nginx-proxy]`: Ensures the proxy starts before the companion tries to interact with it (optional but good practice).
+  - `volumes`: Shares the same volumes as `nginx-proxy` plus the Docker socket. Needs read-write (`rw`) on `certs` to store them.
+  - `environment.NGINX_PROXY_CONTAINER`: Tells the companion which proxy container to configure (must match the `container_name` or service name of the proxy).
+  - `environment.DEFAULT_EMAIL`: Your email for Let's Encrypt registration and expiry notifications.
+  - `depends_on: [nginx-proxy]`: Ensures the proxy starts before the companion tries to interact with it (optional but good practice).
 - **`services.skill`:**
-    - `environment.VIRTUAL_HOST`: Tells `nginx-proxy` which domain name should route to this container.
-    - `environment.LETSENCRYPT_HOST`: Tells `acme-companion` to get a certificate for this domain for this container.
-    - `environment.LETSENCRYPT_EMAIL`: Specific email for this certificate (overrides `DEFAULT_EMAIL`). **Crucial** for registration.
-    - `expose: ["80"]`: **Important:** Use `expose` to declare the internal port your application listens on. _Do not_ use `ports:` to map it directly to the host, as `nginx-proxy` handles the connection _within_ the Docker network.
-    - `networks: [webproxy]`: Connects your app to the same network as the proxy, allowing `nginx-proxy` to reach it using the service name (`webapp` in this case) and the exposed port (`8000`).
+  - `environment.VIRTUAL_HOST`: Tells `nginx-proxy` which domain name should route to this container.
+  - `environment.LETSENCRYPT_HOST`: Tells `acme-companion` to get a certificate for this domain for this container.
+  - `environment.LETSENCRYPT_EMAIL`: Specific email for this certificate (overrides `DEFAULT_EMAIL`). **Crucial** for registration.
+  - `expose: ["80"]`: **Important:** Use `expose` to declare the internal port your application listens on. _Do not_ use `ports:` to map it directly to the host, as `nginx-proxy` handles the connection _within_ the Docker network.
+  - `networks: [webproxy]`: Connects your app to the same network as the proxy, allowing `nginx-proxy` to reach it using the service name (`webapp` in this case) and the exposed port (`8000`).
 - **`networks.webproxy`:** Defines a custom bridge network. This is recommended over the default network for better isolation and service discovery by container name.
 - **`volumes`:** Defines named volumes to persist certificates and configurations even if containers are removed and recreated.
 
@@ -240,11 +242,12 @@ Then, you can mount this configuration file into the `nginx-proxy` container by 
 ```yaml
 services:
   nginx-proxy:
-...
-    volumes:
-...
-      - ./skill_blaataap_com.conf:/etc/nginx/vhost.d/skill.blaataap.com:ro # Mount custom block OPTIONS
+#...
+volumes:
+  #...
+  - ./skill_blaataap_com.conf:/etc/nginx/vhost.d/skill.blaataap.com:ro # Mount custom block OPTIONS
 ```
+
 This will ensure that the custom configuration is loaded when the `nginx-proxy` container starts. The `:ro` at the end of the volume mount makes it read-only, which is a good security practice.
 
 [Custom Nginx Configuration](https://github.com/nginx-proxy/nginx-proxy/tree/main/docs#custom-nginx-configuration)
@@ -252,6 +255,7 @@ This will ensure that the custom configuration is loaded when the `nginx-proxy` 
 [Proxy-wide](https://github.com/nginx-proxy/nginx-proxy/tree/main/docs#per-virtual_host)
 
 ##### Test the configuration
+
 ```bash
 curl -i -X OPTIONS https://skill.blaataap.com
 
@@ -298,6 +302,7 @@ last-modified: Wed, 09 Apr 2025 11:44:39 GMT
 strict-transport-security: max-age=31536000
 x-frame-options: DENY
 content-security-policy: default-src 'self'`
+```
 
 ## References
 
