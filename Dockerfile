@@ -31,10 +31,10 @@ COPY --from=builder /build/app/skill /skill
 
 # Copy the health checker binary from the builder stage
 COPY --from=builder /build/healthchecker/healthchecker /healthchecker
-
+WORKDIR /www
 # Copy static assets
-COPY White_Persian_Cat.jpg .
-COPY index.html .
+COPY White_Persian_Cat.jpg /www
+COPY index.html /www
 
 
 # Create a group and user

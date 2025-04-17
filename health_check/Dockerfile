@@ -4,13 +4,14 @@ FROM alpine:3.21
 
 # Install Python and necessary dependencies
 # Combine RUN commands to reduce layers
-RUN apk add --no-cache python3 py3-pip && \
+RUN apk add --no-cache python3=3.12.10-r0 py3-pip=24.3.1-r0 && \
     apk update && \
-    apk upgrade --no-cache --available && sync # --no-cache for upgrade too
-
-COPY /health_check/requirements.txt requirements.txt
+    apk upgrade --no-cache --available && sync
+WORKDIR /build
+# Copy the requirements file into the container
+COPY /health_check/requirements.txt /build/requirements.txt
 # Consider creating a virtual environment
-RUN pip install --no-cache-dir -r requirements.txt --break-system-packages
+RUN pip install --no-cache-dir -r /build/requirements.txt --break-system-packages
 
 # Set the working directory in the container
 WORKDIR /app
@@ -18,6 +19,12 @@ WORKDIR /app
 # Copy the Python script into the container
 COPY /health_check/api.py .
 COPY /health_check/health_check.py .
+
+# Create a group and user
+RUN addgroup -S skill_group && adduser -S skill_user -G skill_group
+
+# Switch to the new user
+USER skill_user
 
 # Expose the default port for documentation purposes
 # The actual port used depends on the PORT env var passed at runtime
